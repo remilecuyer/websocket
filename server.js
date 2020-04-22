@@ -22,9 +22,11 @@ io.on("connection", function(socket) {
     console.log(room, 'join')
     // join channel provided by client
     socket.join(room)
+    
     // Register "image" events, sent by the client
     var clients = io.sockets.adapter.rooms[room];
     console.log(clients, 'number of client in the room'+room)
+    socket.broadcast.to(room).emit("room_detail", clients);
 
     var srvSockets = io.sockets.sockets;
     console.log(Object.keys(srvSockets).length, 'Count all clients connected to server');
@@ -37,5 +39,19 @@ io.on("connection", function(socket) {
       // Broadcast the "image" event to all other clients in the room
       socket.broadcast.to(room).emit("image", msg);
     });
+
+    socket.on("newScan", function(msg) {
+      console.log(msg, 'newScan')
+      // Broadcast the "image" event to all other clients in the room
+      socket.broadcast.to(room).emit("newScan", msg);
+    });
+
+    socket.on('disconnect', function(){ 
+      var clients = io.sockets.adapter.rooms[room];
+      console.log(clients, 'number of client in the room'+room)
+      socket.broadcast.to(room).emit("room_detail", clients);  
+    });
+
+
   })
 });
