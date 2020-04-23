@@ -56,7 +56,8 @@ io.on("connection", function (socket) {
       console.log('disconnect');
 
       var clients = io.sockets.adapter.rooms[room];
-      console.log(clients.length, 'number of client in the room' + room)
+      // console.log(clients.length, 'number of client in the room' + room)
+      console.log(clients)
       socket.broadcast.to(room).emit("room_detail", clients);
       // deviceList = [];
       // deviceListIds = [];
@@ -64,8 +65,11 @@ io.on("connection", function (socket) {
       deviceList.map((key, i) => 
         deviceList[i]['status'] = false
       );
-      if(clients.length === 1) {
-        socket.broadcast.to(room).emit("devicesList", deviceList);
+      if(clients) {
+
+        if(clients.length === 1) {
+          socket.broadcast.to(room).emit("devicesList", deviceList);
+        }
       }
 
       socket.broadcast.to(room).emit("pingDevices", "ping");
